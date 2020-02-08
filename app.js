@@ -39,15 +39,11 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+// Added below code is for sending signed transaction..!!
 const Web3 = require('web3'); 
 var Tx = require('ethereumjs-tx').Transaction;
 const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 web3.eth.defaultAccount = web3.eth.accounts[0];
-console.log(web3.eth.defaultAccount);
-
-const defaultAccount = async () => {
-  await web3.eth.getAccounts
-}
 
 console.log("print1: " + contractParams.STOCK_ORACLE_ABI);
 console.log("print2: " + contractParams.STOCK_ORACLE_ADDRESS);
@@ -55,15 +51,17 @@ console.log("print2: " + contractParams.STOCK_ORACLE_ADDRESS);
 var TestContract = new web3.eth.Contract(contractParams.STOCK_ORACLE_ABI, contractParams.STOCK_ORACLE_ADDRESS);
 // var Test = TestContract.at(contractParams.STOCK_ORACLE_ADDRESS);
 
-// var account = "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1";
+// Account used as "from" address for sending the transaction
+var account = "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1";
 var privateKey = new Buffer.from("4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d", "hex");
 
+//  Creating the raw transaction
 var rawTx = {
-  nonce: web3.utils.toHex(2),
+  nonce: web3.utils.toHex(17),
   gas: "0x470000",
   to: contractParams.STOCK_ORACLE_ADDRESS,
   value: '0x00',
-  data: TestContract.methods.setStock(web3.utils.fromAscii("Lab4"), 15, 210).encodeABI()
+  data: TestContract.methods.setStock(web3.utils.fromAscii("Lab4"), 18, 214).encodeABI()
 }
 
 var tx = new Tx(rawTx);
@@ -71,7 +69,8 @@ tx.sign(privateKey);
 
 var serializedTx = tx.serialize();
 
-web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+// sending signed transaction
+web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'), {from : account})
 .on('receipt', console.log);
 
 
