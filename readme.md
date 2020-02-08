@@ -12,3 +12,5 @@
         - Make sure, it is running and able to see Express home page.
     5. On Terminal, the transaction hash will be generated.
     6. Go the remix and check the getprice and getvolume functions to check where the txns have been posted by the javascript code.
+
+*Note: All the code is written in app.js file*
